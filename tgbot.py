@@ -1,5 +1,5 @@
 import requests
-token = '2122464959:AAGTAzbUVlVerMMlDXaYbpgC0F8tiIdcaig'
+token = ''
 api_url = 'https://api.telegram.org/bot'
 api_update = '/getUpdates'
 api_send_message = '/sendMessage'
@@ -24,5 +24,6 @@ def choose_answer():
 		return 'Жыве!'
 	else:
 		return 'net otveta' 
+		
 response_message = choose_answer()
 post_response = requests.post(f'{api_url}{token}{api_send_message}?chat_id={last_chat_id}&text={response_message}')
