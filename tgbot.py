@@ -4,11 +4,6 @@ root_url = 'https://api.telegram.org/bot'
 updates_endpoint = '/getUpdates'
 send_message_endpoint = '/sendMessage'
 
-
-# last_message = updates.json().get('result')[-1].get('message')
-# last_message_text = last_message.get('text')
-# chat_id = last_message.get('chat').get('id')
-
 ok_codes = (200,201,202,203,204,205)
 
 def get_updates(token):
@@ -26,13 +21,30 @@ def get_updates(token):
 		result['error'] = True
 		return result
 
-result = get_updates(token)
-if result['error'] == False:
-	updates = result['value']
-	last_update = updates[-1]
-	message = last_update.get('message')
-	last_message = message.get('text')
-	print(last_message)
+def send_message(chat_id, text):
+	payload = {'chat_id': chat_id, 'text': text}
+	url = f'{root_url}{token}{send_message_endpoint}'
+	res = requests.post(f'{root_url}{token}{send_message_endpoint}', data=payload)
+	status_code = res.status_code
+	if status_code in ok_codes:
+		print("200 ok")
+	else:
+		print(f"Request to {url} failed with status code = {status_code}")
+
+def echo(updates):
+	if updates['error'] == False:
+		updates = updates['value']
+		last_update = updates[-1]
+		message = last_update.get('message')
+		text = message.get('text')
+		chat_id = message.get('chat').get('id')
+		send_message(chat_id, text)
+
+def send_echo(token):
+	res = get_updates(token)
+	echo(res)
+send_echo(token)
+
 
 
 # usd_to_byn_today = requests.get('https://www.nbrb.by/api/exrates/rates/431').json().get('Cur_OfficialRate')
