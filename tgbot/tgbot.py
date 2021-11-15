@@ -1,10 +1,5 @@
 import requests
-token = ''
-root_url = 'https://api.telegram.org/bot'
-updates_endpoint = '/getUpdates'
-send_message_endpoint = '/sendMessage'
-
-ok_codes = (200,201,202,203,204,205)
+from config import root_url, ok_codes, updates_endpoint, send_message_endpoint
 
 def get_updates(token):
 	result = {'error': False, 'value': None}
@@ -21,7 +16,7 @@ def get_updates(token):
 		result['error'] = True
 		return result
 
-def send_message(chat_id, text):
+def send_message(chat_id, text, token):
 	payload = {'chat_id': chat_id, 'text': text}
 	url = f'{root_url}{token}{send_message_endpoint}'
 	res = requests.post(f'{root_url}{token}{send_message_endpoint}', data=payload)
@@ -31,19 +26,20 @@ def send_message(chat_id, text):
 	else:
 		print(f"Request to {url} failed with status code = {status_code}")
 
-def echo(updates):
+
+def echo(updates, token):
 	if updates['error'] == False:
 		updates = updates['value']
 		last_update = updates[-1]
 		message = last_update.get('message')
 		text = message.get('text')
 		chat_id = message.get('chat').get('id')
-		send_message(chat_id, text)
+		send_message(chat_id, text, token)
 
 def send_echo(token):
 	res = get_updates(token)
-	echo(res)
-send_echo(token)
+	echo(res, token)
+
 
 
 
