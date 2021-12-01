@@ -1,4 +1,5 @@
 import requests
+from currencies import currency_by_abbr
 from config import root_url, ok_codes, updates_endpoint, send_message_endpoint, token
 
 class TgBoot():
@@ -33,6 +34,11 @@ class TgBoot():
     def process_message(self,text,chat_id):
         if text == "start":
             self.send_message(chat_id, "test")
+        if text[0] == '/':
+            if len(text) == 9 and text[:5] == '/курс':
+                abbr = text[-3:]
+                message = currency_by_abbr(abbr)
+                self.send_message(chat_id, message)
         else:
             self.send_message(chat_id, "ошибка")
 
@@ -48,20 +54,5 @@ class TgBoot():
                     self.process_message(text,chat_id)
                     last_message_id = message_id
 
-rrr = TgBoot(token).process_messages()
-print(rrr)
-
-
-# def echo(updates, token):
-# 	if updates['error'] == False:
-# 		updates = updates['value']
-# 		last_update = updates[-1]
-# 		message = last_update.get('message')
-# 		text = message.get('text')
-# 		chat_id = message.get('chat').get('id')
-# 		send_message(chat_id, text, token)
-#
-# def send_echo(token):
-# 	res = get_updates(token)
-# 	echo(res, token)
+TgBoot(token).process_messages()
 
